@@ -5,16 +5,21 @@ const db = require("../data/dbConfig.js");
 const router = express.Router();
 
 //async await get all accounts
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
-    res.json(await db("accounts").select());
+    res.json(
+      await db("accounts")
+        .limit(req.query.limit)
+        .orderBy(req.query.sortby, req.query.sortdir)
+        .select()
+    );
   } catch (err) {
     next(err);
   }
 });
 
 //async await get account by id
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const account = await db("accounts")
       .where("id", req.params.id)
@@ -27,7 +32,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //async await insert new account
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   try {
     const payload = {
       name: req.body.name,
@@ -45,7 +50,7 @@ router.post("/", async (req, res) => {
 });
 
 //async await update an account
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const payload = {
       name: req.body.name,
@@ -65,7 +70,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //async await delete an account
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     await db("accounts")
       .where("id", req.params.id)
@@ -78,7 +83,7 @@ router.delete("/:id", async (req, res) => {
 
 //non async await versions of routers
 
-// router.get("/", (req, res) => {
+// router.get("/", (req, res, next) => {
 //   db("accounts")
 //     .select()
 //     .then(actions => {
@@ -89,7 +94,7 @@ router.delete("/:id", async (req, res) => {
 //     });
 // });
 
-// router.get("/:id", (req, res) => {
+// router.get("/:id", (req, res, next) => {
 //   db("accounts")
 //     .where("id", req.params.id)
 //     .select()
@@ -102,7 +107,7 @@ router.delete("/:id", async (req, res) => {
 //     });
 // });
 
-// router.post("/", (req, res) => {
+// router.post("/", (req, res, next) => {
 //   const payload = {
 //     name: req.body.name,
 //     budget: req.body.budget
@@ -121,7 +126,7 @@ router.delete("/:id", async (req, res) => {
 //     });
 // });
 
-// router.put("/:id", (req, res) => {
+// router.put("/:id", (req, res, next) => {
 //   const { id } = req.params;
 //   const payload = {
 //     name: req.body.name,
@@ -143,7 +148,7 @@ router.delete("/:id", async (req, res) => {
 //     });
 // });
 
-// router.delete("/:id", (req, res) => {
+// router.delete("/:id", (req, res, next) => {
 //   const { id } = req.params;
 //   db("accounts")
 //     .where({ id })
