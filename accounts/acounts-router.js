@@ -10,7 +10,6 @@ router.get("/", async (req, res, next) => {
     res.json(
       await db("accounts")
         .limit(req.query.limit)
-        .orderBy(req.query.sortby, req.query.sortdir)
         .select()
     );
   } catch (err) {
